@@ -764,6 +764,19 @@ class Mondidocheckout extends PaymentModule
      */
     public function addTransaction($transaction_id, $transaction_data, $status = '')
     {
+        if (!defined('Db::ON_DUPLICATE_KEY')) {
+            if (!Db::getInstance()->Execute(sprintf(
+                'INSERT INTO `' . _DB_PREFIX_ . 'mondido_transactions` (transaction_id, transaction_data, status) VALUES (%d, %s, %s) ON DUPLICATE KEY UPDATE transaction_data = %s, status = %s;',
+                pSQL((int)$transaction_id),
+                pSQL(json_encode($transaction_data)),
+                pSQL($status),
+                pSQL(json_encode($transaction_data)),
+                pSQL($status)
+            ))) {
+                die(Tools::displayError('Error when executing database query'));
+            }
+        }
+
         Db::getInstance()->insert(
             'mondido_transactions',
             array(

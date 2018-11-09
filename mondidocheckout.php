@@ -775,6 +775,8 @@ class Mondidocheckout extends PaymentModule
             ))) {
                 die(Tools::displayError('Error when executing database query'));
             }
+
+            return;
         }
 
         Db::getInstance()->insert(
